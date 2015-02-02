@@ -13,12 +13,12 @@ class ComposeViewController: UIViewController, UITextViewDelegate {
     @IBOutlet var sweetTextView: UITextView! = UITextView()
     @IBOutlet var charRemainingLabel: UILabel! = UILabel()
     
-    init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
         // Custom initialization
     }
     
-    init(coder aDecoder: NSCoder!) {
+    required init(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
 
@@ -48,7 +48,7 @@ class ComposeViewController: UIViewController, UITextViewDelegate {
         
         sweet.saveInBackground()
         
-        self.navigationController.popToRootViewControllerAnimated(true)
+        self.navigationController?.popToRootViewControllerAnimated(true)
         
     }
 

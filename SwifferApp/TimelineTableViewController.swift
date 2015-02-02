@@ -12,19 +12,20 @@ class TimelineTableViewController: UITableViewController {
 
     var timelineData:NSMutableArray = NSMutableArray()
     
-    init(style: UITableViewStyle) {
+    override init(style: UITableViewStyle) {
         super.init(style: style)
         // Custom initialization
     }
     
-    init(coder aDecoder: NSCoder!) {
+    required init(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
     
     override func viewDidAppear(animated: Bool) {
         self.loadData()
         
-        if (!PFUser.currentUser()){
+
+        if PFUser.currentUser() == nil{
             var loginAlert:UIAlertController = UIAlertController(title: "Sign Up / Login", message: "Please sign up or login", preferredStyle: UIAlertControllerStyle.Alert)
             
             loginAlert.addTextFieldWithConfigurationHandler({
@@ -40,13 +41,13 @@ class TimelineTableViewController: UITableViewController {
             
             loginAlert.addAction(UIAlertAction(title: "Login", style: UIAlertActionStyle.Default, handler: {
                 alertAction in
-                let textFields:NSArray = loginAlert.textFields as NSArray
+                let textFields:NSArray = loginAlert.textFields as [UITextField]
                 let usernameTextfield:UITextField = textFields.objectAtIndex(0) as UITextField
                 let passwordTextfield:UITextField = textFields.objectAtIndex(1) as UITextField
                 
                 PFUser.logInWithUsernameInBackground(usernameTextfield.text, password: passwordTextfield.text){
                     (user:PFUser!, error:NSError!)->Void in
-                    if (user){
+                    if (user != nil){
                         println("Login successfull")
                     }else{
                         println("Login failed")
@@ -62,7 +63,7 @@ class TimelineTableViewController: UITableViewController {
             
             loginAlert.addAction(UIAlertAction(title: "Sign Up", style: UIAlertActionStyle.Default, handler: {
                 alertAction in
-                let textFields:NSArray = loginAlert.textFields as NSArray
+                let textFields:NSArray = loginAlert.textFields as [UITextField]
                 let usernameTextfield:UITextField = textFields.objectAtIndex(0) as UITextField
                 let passwordTextfield:UITextField = textFields.objectAtIndex(1) as UITextField
                 
@@ -72,10 +73,10 @@ class TimelineTableViewController: UITableViewController {
                 
                 sweeter.signUpInBackgroundWithBlock{
                     (success:Bool!, error:NSError!)->Void in
-                    if !error{
+                    if error == nil {
                         println("Sign Up successfull")
-                    }else{
-                        let errorString = error.userInfo["error"] as String
+                    } else {
+                        let errorString = error.localizedDescription
                         println(errorString)
                     }
                     
@@ -103,15 +104,19 @@ class TimelineTableViewController: UITableViewController {
         var findTimelineData:PFQuery = PFQuery(className: "Sweets")
         
         findTimelineData.findObjectsInBackgroundWithBlock{
-            (objects:AnyObject[]!, error:NSError!)->Void in
+            (objects:[AnyObject]!, error:NSError!)->Void in
             
-            if !error{
-                for object:PFObject! in objects{
-                    self.timelineData.addObject(object)
+            if error == nil{
+                for object in objects{
+                    
+                    let sweet:PFObject = object as PFObject
+                    self.timelineData.addObject(sweet)
+//                    self.timelineData.addObject(object)
                 }
                 
                 let array:NSArray = self.timelineData.reverseObjectEnumerator().allObjects
-                self.timelineData = array as NSMutableArray
+                self.timelineData = NSMutableArray(array: array)
+//                self.timelineData = array as NSMutableArray
                 
                 self.tableView.reloadData()
                 
@@ -146,10 +151,10 @@ extension TimelineTableViewController{ // TableView Datasource and Delegate
     }
     
     
-    override func tableView(tableView: UITableView?, cellForRowAtIndexPath indexPath: NSIndexPath?) -> UITableViewCell? {
-        let cell:SweetTableViewCell = tableView!.dequeueReusableCellWithIdentifier("Cell", forIndexPath: indexPath!) as SweetTableViewCell
+    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        let cell:SweetTableViewCell = tableView.dequeueReusableCellWithIdentifier("Cell", forIndexPath: indexPath) as SweetTableViewCell
         
-        let sweet:PFObject = self.timelineData.objectAtIndex(indexPath!.row) as PFObject
+        let sweet:PFObject = self.timelineData.objectAtIndex(indexPath.row) as PFObject
         
         cell.sweetTextView.alpha = 0
         cell.timestampLabel.alpha = 0
@@ -166,8 +171,8 @@ extension TimelineTableViewController{ // TableView Datasource and Delegate
         findSweeter.whereKey("objectId", equalTo: sweet.objectForKey("sweeter").objectId)
         
         findSweeter.findObjectsInBackgroundWithBlock{
-            (objects:AnyObject[]!, error:NSError!)->Void in
-            if !error{
+            (objects:[AnyObject]!, error:NSError!)->Void in
+            if error == nil{
                 let user:PFUser = (objects as NSArray).lastObject as PFUser
                 cell.usernameLabel.text = user.username
                 

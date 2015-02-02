@@ -10,13 +10,13 @@ import UIKit
 
 class SweetTableViewCell: UITableViewCell {
 
-    @IBOutlet strong var usernameLabel: UILabel = UILabel()
-    @IBOutlet strong var timestampLabel: UILabel = UILabel()
-    @IBOutlet strong var sweetTextView: UITextView = UITextView()
-    init(style: UITableViewCellStyle, reuseIdentifier: String) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        // Initialization code
-    }
+    @IBOutlet var usernameLabel: UILabel! = UILabel()
+    @IBOutlet var timestampLabel: UILabel! = UILabel()
+    @IBOutlet var sweetTextView: UITextView! = UITextView()
+//    init(style: UITableViewCellStyle, reuseIdentifier: String) {
+//        super.init(style: style, reuseIdentifier: reuseIdentifier)
+//        // Initialization code
+//    }
 
     override func awakeFromNib() {
         super.awakeFromNib()
