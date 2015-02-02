@@ -12,6 +12,7 @@ class SweetTableViewCell: UITableViewCell {
 
     @IBOutlet var usernameLabel: UILabel! = UILabel()
     @IBOutlet var timestampLabel: UILabel! = UILabel()
+    @IBOutlet weak var profileImageView: UIImageView! = UIImageView()
     @IBOutlet var sweetTextView: UITextView! = UITextView()
 //    init(style: UITableViewCellStyle, reuseIdentifier: String) {
 //        super.init(style: style, reuseIdentifier: reuseIdentifier)
